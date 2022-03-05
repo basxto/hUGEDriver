@@ -528,7 +528,7 @@ play_ch4_note:
 ;;; Param: A = Which row the table is on
 ;;; Param: E = Which channel to run the table on
 do_table:
-    ld bc, tables
+    ; ld bc, tables
     ;; todo: add d to tables
 
     call get_current_row.row_in_a
@@ -1302,14 +1302,17 @@ hUGE_dosound::
     ld [highmask1], a
 
 .do_setvol1:
-    push bc
-    ld a, [table1]
-    ld d, a
-    ld a, [table_row1]
-    ld e, 0
-    call do_table
+    ; push bc
+    ; ld a, [table1]
+    ; or a
+    ; jr z, .no_table
+    ; ld d, a
+    ; ld a, [table_row1]
+    ; ld e, 0
+    ; call do_table
+    ; pop bc
 
-    pop bc
+.no_table:
     ld e, 0
     call do_effect
 
