@@ -42,6 +42,9 @@ order2: dw
 order3: dw
 order4: dw
 
+;; Pointer to the song's tables
+tables: dw
+
 ;; Pointers to the instrument tables
 duty_instruments: dw
 wave_instruments: dw
@@ -157,7 +160,7 @@ hUGE_init::
     ld [order_cnt], a
 
     ld c, _end_song_descriptor_pointers - (_start_song_descriptor_pointers)
-    ld de, order1
+    ld de, _start_song_descriptor_pointers
 
 .copy_song_descriptor_loop:
     ld a, [hl+]
@@ -301,7 +304,6 @@ get_current_note:
     ld b, [hl]
 
     call get_current_row
-    ld hl, 0
 
     ;; If the note we found is greater than LAST_NOTE, then it's not a valid note
     ;; and nothing needs to be updated.
@@ -528,8 +530,15 @@ play_ch4_note:
 ;;; Param: A = Which row the table is on
 ;;; Param: E = Which channel to run the table on
 do_table:
-    ; ld bc, tables
-    ;; todo: add d to tables
+    ld bc, tables
+    ld h, a
+    ld a, [bc]
+    inc bc
+    ld b, a
+    ld a, [bc]
+
+
+    ld a, h
 
     call get_current_row.row_in_a
     push bc
@@ -1302,16 +1311,15 @@ hUGE_dosound::
     ld [highmask1], a
 
 .do_setvol1:
-    ; push bc
-    ; ld a, [table1]
-    ; or a
-    ; jr z, .no_table
-    ; ld d, a
-    ; ld a, [table_row1]
-    ; ld e, 0
-    ; call do_table
-    ; pop bc
-
+    ld a, [table1]
+    or a
+    jr z, .no_table
+    ld d, a
+    ld a, [table_row1]
+    ld e, 0
+    push bc
+    call do_table
+    pop bc
 .no_table:
     ld e, 0
     call do_effect

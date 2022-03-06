@@ -2,12 +2,13 @@ include "include/hUGE.inc"
 
 SECTION "Song Data", ROMX
 
-;; song descriptor
+;; Song descriptor
 
 SONG_DESCRIPTOR::
 db TICKS  ; tempo
 dw order_cnt
 dw order1, order2, order3, order4
+dw tables
 dw duty_instruments, wave_instruments, noise_instruments
 dw routines
 dw waves
@@ -17,6 +18,7 @@ dw waves
 ;;;;;;;;;;;
 
 include "order.htt"
+include "subpattern_order.htt"
 
 ;;;;;;;;;;;;
 ;; Patterns
