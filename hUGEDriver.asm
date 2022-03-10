@@ -526,20 +526,23 @@ play_ch4_note:
     ret
 
 ;;; Executes a row of a table.
-;;; Param: D = Index to which table to run
-;;; Param: A = Which row the table is on
+;;; Param: A = Index to which table to run
+;;; Param: D = Which row the table is on
 ;;; Param: E = Which channel to run the table on
 do_table:
-    ld bc, tables
-    ld h, a
-    ld a, [bc]
-    inc bc
-    ld b, a
-    ld a, [bc]
+    or a
+    ret z
 
+    ; ld bc, tables
+    ; ld h, a
+    ; ld a, [bc]
+    ; inc bc
+    ; ld b, a
+    ; ld a, [bc]
+    ; ld a, h
+    ; todo: setup tables pointer
 
-    ld a, h
-
+    ld a, d
     call get_current_row.row_in_a
     push bc
     ld b, e
@@ -553,13 +556,14 @@ do_table:
     ;; pushed = instrument/effect
 
     ;; TODO: get note poly for ch4 instead
+    ld c, b ; save channel
     call get_note_period
     ld d, h
     ld e, l
     xor a
     call update_channel_freq
 
-    ld e, b
+    ld e, c
     pop bc
     call do_effect
 
@@ -1311,16 +1315,14 @@ hUGE_dosound::
     ld [highmask1], a
 
 .do_setvol1:
-    ld a, [table1]
-    or a
-    jr z, .no_table
-    ld d, a
     ld a, [table_row1]
+    ld d, a
+    ld a, [table1]
     ld e, 0
     push bc
     call do_table
     pop bc
-.no_table:
+
     ld e, 0
     call do_effect
 
